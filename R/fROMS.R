@@ -1,4 +1,4 @@
-#' \code{readROMS} Read Norkyst data
+#' \code{readROMS} Read Norfjords data
 #'
 #' @param roms.dir Repository of Norkyst data (in NetCDF format)
 #' @param date Text string matching date info in file name
@@ -66,7 +66,7 @@ readROMS <- function(roms.dir='R:/Jofrid/Kaldfjord_160m_2014', date='20141101', 
   }
 }
 
-#' \code{cropROMS} Spatial crop of Norkyst model output
+#' \code{cropROMS} Spatial crop of Norfjords model output
 #'
 #' @param uc u current vector data (list with components lon, lat, and u)
 #' @param vc v current vector data (list with components lon, lat, and v)
@@ -79,7 +79,7 @@ readROMS <- function(roms.dir='R:/Jofrid/Kaldfjord_160m_2014', date='20141101', 
 #' @details Crops matrices and arrays of u and v variables, given specified row and column matrices.
 #' Note! Function currently only functional for current vector (u & v) data combined.
 #' @family Norkyst model output
-#' @seealso \code{\link{readROMS}} to Read Norkyst data,
+#' @seealso \code{\link{readROMS}} to read Norfjords data,
 #'   \code{\link{imageROMS}} to plot data
 #' @author Martin Biuw
 #' @export
@@ -98,7 +98,7 @@ cropROMS <- function(uc=u, vc=v, xdim=c(100:200), ydim=c(1:150)) {
 }
 
 
-#' \code{imageROMS} Plot current vector data from Norkyst model
+#' \code{imageROMS} Plot current vector data from Norfjords model
 #'
 #' @param u current vector data (list with components lon, lat, and u)
 #' @param v current vector data (list with components lon, lat, and v)
@@ -111,7 +111,7 @@ cropROMS <- function(uc=u, vc=v, xdim=c(100:200), ydim=c(1:150)) {
 #' and arrows represent direction. This version works only for data in original matrix/array format,
 #' and currently only plots surface currents
 #' @family Norkyst model output
-#' @seealso \code{\link{readROMS}} to Read Norkyst data,
+#' @seealso \code{\link{readROMS}} to read Norfjords data,
 #'   \code{\link{cropROMS}} to crop Norkyst data
 #' @author Martin Biuw
 #' @importFrom fields image.plot tim.colors
