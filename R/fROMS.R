@@ -23,7 +23,7 @@
 
 
 readROMS <- function(roms.dir='R:/Jofrid/Kaldfjord_160m_2014', date='20141101', var='u',
-                     xlim=c(18.3, 18.8), ylim=c(69.6, 69.9), to.xyz=F) {
+                     xlim=c(18.3, 18.8), ylim=c(69.6, 69.9), to.xyz=F, layer=35) {
 
   varname <- var
 
@@ -37,7 +37,7 @@ readROMS <- function(roms.dir='R:/Jofrid/Kaldfjord_160m_2014', date='20141101', 
 
   dim.nam <- paste(c('lon', 'lat'), var, sep='_')
 
-  if(var=='temp' | var=='salt') {
+  if(var=='temp' | var=='salt' | var=='h') {
     dim.nam <- paste(c('lon', 'lat'), 'rho', sep='_')
   }
 
@@ -54,9 +54,15 @@ readROMS <- function(roms.dir='R:/Jofrid/Kaldfjord_160m_2014', date='20141101', 
 
 
   if(to.xyz) {
-    xyz <- data.frame(lon=lon[intersect(lon.clip, lat.clip)],
-                    lat=lat[intersect(lon.clip, lat.clip)],
-                    var=var[,,1][intersect(lon.clip, lat.clip)])
+    if(length(dim(var))==3) {
+      xyz <- data.frame(lon=lon[intersect(lon.clip, lat.clip)],
+                      lat=lat[intersect(lon.clip, lat.clip)],
+                      var=var[,,layer][intersect(lon.clip, lat.clip)])
+    } else {
+      xyz <- data.frame(lon=lon[intersect(lon.clip, lat.clip)],
+                        lat=lat[intersect(lon.clip, lat.clip)],
+                        var=var[,][intersect(lon.clip, lat.clip)])
+    }
     names(xyz)[3] <- varname
     xyz
   } else {
@@ -126,11 +132,15 @@ imageROMS <- function(u=u, v=v, arr.dens=2, scale=100, arr.col='slategrey') {
   im.dims <- list(c(1:(del.dims[1]-1)),
                   c(1:(del.dims[2]-1)))
 
-  arr.starts <- as.matrix(expand.grid(seq(1, del.dims[1]-1, by=arr.dens),
+  arr.mids <- as.matrix(expand.grid(seq(1, del.dims[1]-1, by=arr.dens),
                    seq(1, del.dims[2]-1, by=arr.dens), KEEP.OUT.ATTRS = F))
-  arr.stops <- t(apply(arr.starts, 1, function(x) {
-    c(x[1]+(scale*u$u[x[1],x[2],dim(u$u)[3]]), x[2]+(scale*v$v[x[1], x[2], dim(v$v)[3]]))
+  arr.starts <- t(apply(arr.mids, 1, function(x) {
+    c(x[1]-(0.5*((scale*u$u[x[1],x[2],dim(u$u)[3]]))), x[2]-(0.5*(scale*v$v[x[1], x[2], dim(v$v)[3]])))
   }))
+  arr.stops <- t(apply(arr.mids, 1, function(x) {
+    c(x[1]+(0.5*((scale*u$u[x[1],x[2],dim(u$u)[3]]))), x[2]+(0.5*(scale*v$v[x[1], x[2], dim(v$v)[3]])))
+  }))
+
   image.plot(im.dims[[1]],
              im.dims[[2]],
              sqrt(u$u[,-del.dims[2],1]^2+v$v[-del.dims[1],,1]^2),
